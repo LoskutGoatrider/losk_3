@@ -122,7 +122,6 @@
           <Property Name="UserID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Login" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Password" Type="varchar" MaxLength="256" Nullable="false" />
-          <Property Name="CreatedAt" Type="datetime" />
           <Property Name="id_Role" Type="int" />
         </EntityType>
         <Association Name="FK__Installed__Subsc__49C3F6B7">
@@ -457,7 +456,6 @@
           <Property Name="UserID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Login" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Password" Type="String" MaxLength="256" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="CreatedAt" Type="DateTime" Precision="3" />
           <Property Name="id_Role" Type="Int32" />
           <NavigationProperty Name="Registration" Relationship="Self.FK__Registrat__UserI__3D5E1FD2" FromRole="Users" ToRole="Registration" />
           <NavigationProperty Name="Role" Relationship="TELECOMModel.FK_Users_Role" FromRole="Users" ToRole="Role" />
@@ -787,7 +785,6 @@
                 <ScalarProperty Name="UserID" ColumnName="UserID" />
                 <ScalarProperty Name="Login" ColumnName="Login" />
                 <ScalarProperty Name="Password" ColumnName="Password" />
-                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
                 <ScalarProperty Name="id_Role" ColumnName="id_Role" />
               </MappingFragment>
             </EntityTypeMapping>

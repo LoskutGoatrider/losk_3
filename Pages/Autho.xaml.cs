@@ -16,7 +16,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
-using losk_3.BasaSQL; 
+using losk_3.BasaSQL;
+using System.Windows.Threading;
 
 namespace losk_3.Pages
 {
@@ -25,12 +26,23 @@ namespace losk_3.Pages
         /// </summary>
         public partial class Autho : Page
         {
+                private DispatcherTimer timer;
+                private int remainingTime;
                 int click;
                 public Autho()
                 {
+
                         InitializeComponent();
+                        CreateTimer();
                         click = 0;
                 }
+                private void CreateTimer()
+                {
+                        timer = new DispatcherTimer();
+                        timer.Interval = TimeSpan.FromSeconds(1);
+                        timer.Tick += Timer_Tick;
+                }
+
 
                 private void btnEnterGuests_Click(object sender, RoutedEventArgs e)
                 {
@@ -43,11 +55,11 @@ namespace losk_3.Pages
                         click += 1;
                         string login = tbLogin.Text.Trim();
                         string password = tbPassword.Text.Trim();
-                        //string hashPassword = Hash.HashPassword(password);
+                        string hashPassword = Hash.HashPassword(password);
 
                         var db = Helper.GetContext();
 
-                        var user = db.Users.Where(x => x.Login == login && x.Password == password).FirstOrDefault();
+                        var user = db.Users.Where(x => x.Login == login && x.Password == hashPassword).FirstOrDefault();
                         if (click == 1)
                         {
                                 if (user != null)
@@ -71,6 +83,16 @@ namespace losk_3.Pages
                         }
                         else if (click > 1)
                         {
+                                if (click == 3)
+                                {
+                                        BlockControls();
+
+                                        remainingTime = 10;
+                                        txtBlockTimer.Visibility = Visibility.Visible;
+                                        txtBlockTimer.Text = $"Оставшееся время: {remainingTime} секунд";
+
+                                        timer.Start();
+                                }
                                 if (user != null && tbCaptcha.Text == tblCaptcha.Text)
                                 {
                                         MessageBox.Show("Вы вошли под: " + user.Role.name.ToString());
@@ -89,9 +111,6 @@ namespace losk_3.Pages
                                         tbCaptcha.Text = "";
                                 }
                         }
-
-
-
                 }
 
                 private void btnEnterGuest_Click(object sender, RoutedEventArgs e)
@@ -123,6 +142,45 @@ namespace losk_3.Pages
                                         break;
 
                         }
+                }
+                private void BlockControls()
+                {
+                        tbLogin.IsEnabled = false;
+                        tbPassword.IsEnabled = false;
+                        tbCaptcha.IsEnabled = false;
+                        btnEnterGuests.IsEnabled = false;
+                        btnEnter.IsEnabled = false;
+                }
+
+                private void UnlockControls()
+                {
+                        tbLogin.IsEnabled = true;
+                        tbPassword.IsEnabled = true;
+                        tbCaptcha.IsEnabled = true;
+                        btnEnterGuests.IsEnabled = true;
+                        btnEnter.IsEnabled = true;
+                        tbLogin.Clear();
+                        tbPassword.Clear();
+                        tblCaptcha.Text = "Text";
+                        tbCaptcha.Text = "";
+                        tbCaptcha.Visibility = Visibility.Hidden;
+                        tblCaptcha.Visibility = Visibility.Hidden;
+                        click = 0;
+                }
+
+                private void Timer_Tick(object sender, EventArgs e)
+                {
+                        remainingTime--;
+
+                        if (remainingTime <= 0)
+                        {
+                                timer.Stop();
+                                UnlockControls();
+                                txtBlockTimer.Visibility = Visibility.Hidden;
+                                return;
+                        }
+
+                        txtBlockTimer.Text = $"Оставшееся время: {remainingTime} секунд";
                 }
 
 
