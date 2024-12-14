@@ -202,8 +202,8 @@ namespace losk_3.Pages
                 private bool IsAccessAllowed()
                 {
                         DateTime now = DateTime.Now;
-                        TimeSpan startTime = new TimeSpan(16, 0, 0);  // 9:00
-                        TimeSpan endTime = new TimeSpan(23, 0, 0);    // 18:00
+                        TimeSpan startTime = new TimeSpan(9, 0, 0);  // 9:00
+                        TimeSpan endTime = new TimeSpan(18, 0, 0);    // 18:00
                         TimeSpan currentTime = now.TimeOfDay;
 
                         return currentTime >= startTime && currentTime <= endTime;
@@ -217,15 +217,15 @@ namespace losk_3.Pages
                         string firstName = user.Technicians.FirstName.ToString();
                         string middleName = user.Technicians.MiddleName.ToString();  
 
-                        if (now.Hour >= 16 && now.Hour < 19)
+                        if (now.Hour >= 9 && now.Hour < 12)
                         {
                                 timeOfDay = "Доброе Утро!";
                         }
-                        else if (now.Hour >= 20 && now.Hour < 21)
+                        else if (now.Hour >= 12 && now.Hour < 16)
                         {
                                 timeOfDay = "Добрый День!";
                         }
-                        else if (now.Hour >= 22 && now.Hour < 23)
+                        else if (now.Hour >= 16 && now.Hour < 18)
                         {
                                 timeOfDay = "Добрый Вечер!";
                         }
