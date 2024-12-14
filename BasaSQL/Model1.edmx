@@ -110,8 +110,9 @@
             <PropertyRef Name="TechnicianID" />
           </Key>
           <Property Name="TechnicianID" Type="int" Nullable="false" />
-          <Property Name="FirstName" Type="varchar" MaxLength="50" />
           <Property Name="LastName" Type="varchar" MaxLength="50" />
+          <Property Name="FirstName" Type="varchar" MaxLength="50" />
+          <Property Name="MiddleName" Type="varchar" MaxLength="50" />
           <Property Name="Phone" Type="varchar" MaxLength="20" />
           <Property Name="Email" Type="varchar" MaxLength="100" />
         </EntityType>
@@ -123,6 +124,7 @@
           <Property Name="Login" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Password" Type="varchar" MaxLength="256" Nullable="false" />
           <Property Name="id_Role" Type="int" />
+          <Property Name="TechnicianID" Type="int" />
         </EntityType>
         <Association Name="FK__Installed__Subsc__49C3F6B7">
           <End Role="Subscribers" Type="Self.Subscribers" Multiplicity="0..1" />
@@ -256,6 +258,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Users_Technicians">
+          <End Role="Technicians" Type="Self.Technicians" Multiplicity="0..1" />
+          <End Role="Users" Type="Self.Users" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Technicians">
+              <PropertyRef Name="TechnicianID" />
+            </Principal>
+            <Dependent Role="Users">
+              <PropertyRef Name="TechnicianID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="Хранилище TELECOMModelContainer">
           <EntitySet Name="Equipment" EntityType="Self.Equipment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="InstalledEquipment" EntityType="Self.InstalledEquipment" Schema="dbo" store:Type="Tables" />
@@ -312,6 +326,10 @@
           </AssociationSet>
           <AssociationSet Name="FK_Users_Role" Association="Self.FK_Users_Role">
             <End Role="Role" EntitySet="Role" />
+            <End Role="Users" EntitySet="Users" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Users_Technicians" Association="Self.FK_Users_Technicians">
+            <End Role="Technicians" EntitySet="Technicians" />
             <End Role="Users" EntitySet="Users" />
           </AssociationSet>
         </EntityContainer>
@@ -448,6 +466,8 @@
           <Property Name="Phone" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="ServiceRequests" Relationship="Self.FK_ServiceRequests_Technicians" FromRole="Technicians" ToRole="ServiceRequests" />
+          <Property Name="MiddleName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Users" Relationship="TELECOMModel.FK_Users_Technicians" FromRole="Technicians" ToRole="Users" />
         </EntityType>
         <EntityType Name="Users">
           <Key>
@@ -459,6 +479,8 @@
           <Property Name="id_Role" Type="Int32" />
           <NavigationProperty Name="Registration" Relationship="Self.FK__Registrat__UserI__3D5E1FD2" FromRole="Users" ToRole="Registration" />
           <NavigationProperty Name="Role" Relationship="TELECOMModel.FK_Users_Role" FromRole="Users" ToRole="Role" />
+          <Property Name="TechnicianID" Type="Int32" />
+          <NavigationProperty Name="Technicians" Relationship="TELECOMModel.FK_Users_Technicians" FromRole="Users" ToRole="Technicians" />
         </EntityType>
         <Association Name="FK__ServiceSt__Equip__59063A47">
           <End Role="Equipment" Type="Self.Equipment" Multiplicity="0..1" />
@@ -638,6 +660,10 @@
             <End Role="Role" EntitySet="Role" />
             <End Role="Users" EntitySet="Users" />
           </AssociationSet>
+          <AssociationSet Name="FK_Users_Technicians" Association="TELECOMModel.FK_Users_Technicians">
+            <End Role="Technicians" EntitySet="Technicians" />
+            <End Role="Users" EntitySet="Users" />
+          </AssociationSet>
         </EntityContainer>
         <Association Name="FK_Users_Role">
           <End Type="TELECOMModel.Role" Role="Role" Multiplicity="0..1" />
@@ -648,6 +674,18 @@
             </Principal>
             <Dependent Role="Users">
               <PropertyRef Name="id_Role" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Users_Technicians">
+          <End Type="TELECOMModel.Technicians" Role="Technicians" Multiplicity="0..1" />
+          <End Type="TELECOMModel.Users" Role="Users" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Technicians">
+              <PropertyRef Name="TechnicianID" />
+            </Principal>
+            <Dependent Role="Users">
+              <PropertyRef Name="TechnicianID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -771,6 +809,7 @@
           <EntitySetMapping Name="Technicians">
             <EntityTypeMapping TypeName="TELECOMModel.Technicians">
               <MappingFragment StoreEntitySet="Technicians">
+                <ScalarProperty Name="MiddleName" ColumnName="MiddleName" />
                 <ScalarProperty Name="TechnicianID" ColumnName="TechnicianID" />
                 <ScalarProperty Name="FirstName" ColumnName="FirstName" />
                 <ScalarProperty Name="LastName" ColumnName="LastName" />
@@ -782,6 +821,7 @@
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="TELECOMModel.Users">
               <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="TechnicianID" ColumnName="TechnicianID" />
                 <ScalarProperty Name="UserID" ColumnName="UserID" />
                 <ScalarProperty Name="Login" ColumnName="Login" />
                 <ScalarProperty Name="Password" ColumnName="Password" />

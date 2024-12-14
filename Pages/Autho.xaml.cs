@@ -59,9 +59,22 @@ namespace losk_3.Pages
 
                         var db = Helper.GetContext();
 
+
+
                         var user = db.Users.Where(x => x.Login == login && x.Password == hashPassword).FirstOrDefault();
                         if (click == 1)
                         {
+                                if (!IsAccessAllowed())
+                                {
+                                        MessageBox.Show("Доступ к системе в данный момент запрещён. Пожалуйста, приходите в рабочие часы с 9:00 до 18:00.",
+                                            "Ошибка доступа", MessageBoxButton.OK, MessageBoxImage.Warning);
+
+                                        BlockControls();
+                                        remainingTime = 30;
+                                        txtBlockTimer.Visibility = Visibility.Visible;
+                                        timer.Start();
+                                        return;
+                                }
                                 if (user != null)
                                 {
                                         MessageBox.Show("Вы вошли под: " + user.Role.name.ToString());
@@ -71,6 +84,8 @@ namespace losk_3.Pages
                                         tbCaptcha.Text = "";
                                         tblCaptcha.Visibility = Visibility.Hidden;
                                         tbCaptcha.Visibility = Visibility.Hidden;
+                                        MessageBox.Show(GreetUser(user));
+                                        LoadPage(user.Role.name.ToString(), user); 
                                 }
                                 else
                                 {
@@ -78,8 +93,7 @@ namespace losk_3.Pages
                                         GenerateCapctcha();
                                         tbPassword.Text = "";
                                         tbCaptcha.Text = "";
-                                }
-                                
+                                }      
                         }
                         else if (click > 1)
                         {
@@ -102,6 +116,8 @@ namespace losk_3.Pages
                                         tbCaptcha.Text = "";
                                         tblCaptcha.Visibility = Visibility.Hidden;
                                         tbCaptcha.Visibility = Visibility.Hidden;
+                                        MessageBox.Show(GreetUser(user));
+                                        LoadPage(user.Role.name.ToString(), user);
                                 }
                                 else
                                 {
@@ -109,6 +125,7 @@ namespace losk_3.Pages
                                         GenerateCapctcha();
                                         tbPassword.Text = "";
                                         tbCaptcha.Text = "";
+
                                 }
                         }
                 }
@@ -182,7 +199,41 @@ namespace losk_3.Pages
 
                         txtBlockTimer.Text = $"Оставшееся время: {remainingTime} секунд";
                 }
+                private bool IsAccessAllowed()
+                {
+                        DateTime now = DateTime.Now;
+                        TimeSpan startTime = new TimeSpan(16, 0, 0);  // 9:00
+                        TimeSpan endTime = new TimeSpan(23, 0, 0);    // 18:00
+                        TimeSpan currentTime = now.TimeOfDay;
 
+                        return currentTime >= startTime && currentTime <= endTime;
+                }
+
+                private string GreetUser(Users user)
+                {
+                        DateTime now = DateTime.Now;
+                        string timeOfDay = null;
+                        string lastName = user.Technicians.LastName.ToString();
+                        string firstName = user.Technicians.FirstName.ToString();
+                        string middleName = user.Technicians.MiddleName.ToString();  
+
+                        if (now.Hour >= 16 && now.Hour < 19)
+                        {
+                                timeOfDay = "Доброе Утро!";
+                        }
+                        else if (now.Hour >= 20 && now.Hour < 21)
+                        {
+                                timeOfDay = "Добрый День!";
+                        }
+                        else if (now.Hour >= 22 && now.Hour < 23)
+                        {
+                                timeOfDay = "Добрый Вечер!";
+                        }
+
+                        string fullName = $"{lastName} {firstName}" + (string.IsNullOrEmpty(middleName) ? "" : $" {middleName}");
+
+                        return $"{timeOfDay}\nДобро пожаловать {fullName}";
+                }
 
         }
 

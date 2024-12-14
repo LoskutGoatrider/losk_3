@@ -18,6 +18,7 @@ namespace losk_3.BasaSQL
         public Technicians()
         {
             this.ServiceRequests = new HashSet<ServiceRequests>();
+            this.Users = new HashSet<Users>();
         }
     
         public int TechnicianID { get; set; }
@@ -25,8 +26,11 @@ namespace losk_3.BasaSQL
         public string LastName { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }
+        public string MiddleName { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ServiceRequests> ServiceRequests { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Users> Users { get; set; }
     }
 }
